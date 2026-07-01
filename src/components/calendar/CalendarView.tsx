@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -11,9 +11,16 @@ import type {
   EventDropArg,
 } from '@fullcalendar/core'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { getScheduledTasks, createTask, updateTaskSchedule } from '../../db/tasks'
+import {
+  getScheduledTasks,
+  createTask,
+  updateTaskSchedule,
+  updateTaskTitle,
+  deleteTask,
+} from '../../db/tasks'
 import { tasksToEvents } from '../../lib/taskEvents'
 import { useCalendarStore } from '../../stores/calendarStore'
+import { CalendarEventContent } from './CalendarEventContent'
 import type { CalendarView } from '../../db/types'
 
 const viewMap: Record<string, CalendarView> = {
@@ -22,10 +29,9 @@ const viewMap: Record<string, CalendarView> = {
   timeGridDay: 'timeGridDay',
 }
 
-const MIN_DURATION_FOR_TIME_MS = 30 * 60 * 1000
-
 export function CalendarView() {
   const { view, currentDate, setView, setCurrentDate } = useCalendarStore()
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const tasks = useLiveQuery(getScheduledTasks, []) ?? []
   const events = tasksToEvents(tasks)
 
@@ -39,14 +45,30 @@ export function CalendarView() {
   )
 
   const handleSelect = useCallback(async (info: DateSelectArg) => {
-    const title = window.prompt('Task title')
-    if (!title?.trim()) return
-
-    await createTask({
-      title,
+    const task = await createTask({
+      title: '',
       scheduledStart: info.start,
       scheduledEnd: info.end,
     })
+    setEditingTaskId(task.id)
+    info.view.calendar.unselect()
+  }, [])
+
+  const handleSaveTitle = useCallback(async (id: string, title: string) => {
+    setEditingTaskId((current) => (current === id ? null : current))
+    const trimmed = title.trim()
+    if (!trimmed) {
+      await deleteTask(id)
+    } else {
+      await updateTaskTitle(id, trimmed)
+    }
+  }, [])
+
+  const handleCancelEdit = useCallback(async (id: string, currentTitle: string) => {
+    setEditingTaskId((current) => (current === id ? null : current))
+    if (!currentTitle.trim()) {
+      await deleteTask(id)
+    }
   }, [])
 
   const handleEventDrop = useCallback(async (info: EventDropArg) => {
@@ -61,22 +83,17 @@ export function CalendarView() {
     await updateTaskSchedule(info.event.id, info.event.start, info.event.end)
   }, [])
 
-  const renderEventContent = useCallback((arg: EventContentArg) => {
-    const start = arg.event.start
-    const end = arg.event.end
-    const durationMs =
-      start && end ? end.getTime() - start.getTime() : 0
-    const showTime = durationMs >= MIN_DURATION_FOR_TIME_MS && arg.timeText
-
-    return (
-      <div className="event-content-stack">
-        <div className="event-title">{arg.event.title}</div>
-        {showTime ? (
-          <div className="event-time-muted">{arg.timeText}</div>
-        ) : null}
-      </div>
-    )
-  }, [])
+  const renderEventContent = useCallback(
+    (arg: EventContentArg) => (
+      <CalendarEventContent
+        arg={arg}
+        editingTaskId={editingTaskId}
+        onSaveTitle={handleSaveTitle}
+        onCancelEdit={handleCancelEdit}
+      />
+    ),
+    [editingTaskId, handleSaveTitle, handleCancelEdit],
+  )
 
   return (
     <div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm">

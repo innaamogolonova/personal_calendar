@@ -39,6 +39,17 @@ export async function createTask(input: {
   return task
 }
 
+export async function updateTaskTitle(id: string, title: string): Promise<void> {
+  await db.tasks.update(id, {
+    title: title.trim(),
+    updatedAt: now(),
+  })
+}
+
+export async function deleteTask(id: string): Promise<void> {
+  await db.tasks.delete(id)
+}
+
 export async function updateTaskSchedule(
   id: string,
   scheduledStart: Date,

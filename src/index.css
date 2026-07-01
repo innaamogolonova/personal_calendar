@@ -28,6 +28,19 @@ body {
   height: 2.25rem;
 }
 
+.fc .fc-timegrid-slot-label {
+  vertical-align: top;
+}
+
+.fc .fc-timegrid-slot-label-frame {
+  padding-top: 0;
+}
+
+.fc .fc-timegrid-slot-label-cushion {
+  padding-top: 0;
+  line-height: 1;
+}
+
 .fc .fc-timegrid-event .fc-event-main {
   justify-content: flex-start;
 }
@@ -70,6 +83,24 @@ body {
   line-height: 1.15;
   font-weight: 400;
   white-space: nowrap;
+}
+
+.fc .fc-timegrid-event .event-title-input {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  font-weight: 500;
+  padding: 0;
+  margin: 0;
+}
+
+.fc .fc-timegrid-event .event-title-input::placeholder {
+  color: rgba(255, 255, 255, 0.65);
 }
 
 .fc .fc-daygrid-event .event-content-stack {
