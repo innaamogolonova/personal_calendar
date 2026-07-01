@@ -40,15 +40,15 @@ Tasks are a **single source of truth**: scheduling on the calendar updates the s
 - Keep diffs focused; match existing patterns in the codebase.
 - Local-first: assume offline, single-browser use unless explicitly adding sync.
 
-## Current task 
+## Current task (ONLY DEVELOPER EDITS)
 > update with next step when current is completed
 
-Create basic calendar view 
+Calendar sync to task list functionality 
 
-## MVP high level next steps: 
+## MVP high level next steps (ONLY DEVELOPER EDITS): 
 - [x] Figure out tech stack 
 - [x] Start repo, create context page (AGENTS.md) and README.md
-- [ ] Create basic calendar view 
+- [x] Create basic calendar view 
 - [ ] Calendar sync to task list functionality 
 - [ ] Project label for tasks 
 - [ ] Project nested structure 

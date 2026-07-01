@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { deleteTask, getTaskById } from '../../db/tasks'
-import { formatDateTime } from '../../lib/dates'
+import { formatScheduledRange } from '../../lib/dates'
 import {
   findCalendarScrollContainer,
   getAnchoredPopoverPosition,
@@ -123,8 +123,7 @@ export function TaskEventPopover({
               <div>
                 <dt className="text-xs font-medium text-neutral-500">Scheduled</dt>
                 <dd className="mt-0.5 text-neutral-700">
-                  {formatDateTime(task.scheduledStart)} –{' '}
-                  {formatDateTime(task.scheduledEnd)}
+                  {formatScheduledRange(task.scheduledStart, task.scheduledEnd)}
                 </dd>
               </div>
             )}

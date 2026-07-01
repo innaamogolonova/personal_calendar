@@ -1,15 +1,26 @@
+import { useState } from 'react'
+import { TaskEditPanel } from '../components/tasks/TaskEditPanel'
+import { TaskList } from '../components/tasks/TaskList'
+
 export function TasksPage() {
+  const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
+
   return (
-    <div className="mx-auto max-w-4xl">
+    <div className="mx-auto max-w-5xl">
       <header className="mb-6">
         <h2 className="text-2xl font-semibold text-neutral-900">Tasks</h2>
         <p className="mt-1 text-sm text-neutral-500">
-          Task list coming soon. Tasks created on the calendar will appear
-          here.
+          All tasks from your calendar and task list. Changes sync automatically.
         </p>
       </header>
-      <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-12 text-center text-neutral-500">
-        No task list yet
+      <div className="relative">
+        <TaskList onSelectTask={setEditingTaskId} />
+        {editingTaskId && (
+          <TaskEditPanel
+            taskId={editingTaskId}
+            onClose={() => setEditingTaskId(null)}
+          />
+        )}
       </div>
     </div>
   )

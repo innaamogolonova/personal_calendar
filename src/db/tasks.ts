@@ -5,6 +5,11 @@ function now() {
   return new Date()
 }
 
+export async function getAllTasks(): Promise<Task[]> {
+  const tasks = await db.tasks.toArray()
+  return tasks.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime())
+}
+
 export async function getScheduledTasks(): Promise<Task[]> {
   return db.tasks
     .filter((task) => task.scheduledStart != null && task.scheduledEnd != null)
