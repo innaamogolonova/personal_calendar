@@ -14,4 +14,11 @@ Everything stays in your browser. No account or server required.
 
 ## Status
 
-Early development — scaffolding the app and building the first calendar view.
+Early development — basic calendar view is working. Task list and projects are next.
+
+## Development
+
+```bash
+npm install
+npm run dev
+```

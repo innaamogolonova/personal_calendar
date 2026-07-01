@@ -1,0 +1,52 @@
+import { db } from './database'
+import type { Task, TaskPriority, TaskStatus } from './types'
+
+function now() {
+  return new Date()
+}
+
+export async function getScheduledTasks(): Promise<Task[]> {
+  return db.tasks
+    .filter((task) => task.scheduledStart != null && task.scheduledEnd != null)
+    .toArray()
+}
+
+export async function createTask(input: {
+  title: string
+  scheduledStart: Date
+  scheduledEnd: Date
+  status?: TaskStatus
+  priority?: TaskPriority
+  projectId?: string
+  pageId?: string
+}): Promise<Task> {
+  const timestamp = now()
+  const task: Task = {
+    id: crypto.randomUUID(),
+    title: input.title.trim(),
+    projectId: input.projectId,
+    pageId: input.pageId,
+    status: input.status ?? 'todo',
+    priority: input.priority ?? 'medium',
+    scheduledStart: input.scheduledStart,
+    scheduledEnd: input.scheduledEnd,
+    sortOrder: Date.now(),
+    createdAt: timestamp,
+    updatedAt: timestamp,
+  }
+
+  await db.tasks.add(task)
+  return task
+}
+
+export async function updateTaskSchedule(
+  id: string,
+  scheduledStart: Date,
+  scheduledEnd: Date,
+): Promise<void> {
+  await db.tasks.update(id, {
+    scheduledStart,
+    scheduledEnd,
+    updatedAt: now(),
+  })
+}
