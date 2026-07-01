@@ -7,6 +7,7 @@ import type {
   DateSelectArg,
   DatesSetArg,
   EventChangeArg,
+  EventClickArg,
   EventContentArg,
   EventDropArg,
 } from '@fullcalendar/core'
@@ -22,6 +23,7 @@ import { tasksToEvents } from '../../lib/taskEvents'
 import { useCalendarStore } from '../../stores/calendarStore'
 import { CalendarEventContent } from './CalendarEventContent'
 import type { CalendarView } from '../../db/types'
+import type { TaskSelection } from '../../types/taskSelection'
 
 const viewMap: Record<string, CalendarView> = {
   dayGridMonth: 'dayGridMonth',
@@ -29,7 +31,11 @@ const viewMap: Record<string, CalendarView> = {
   timeGridDay: 'timeGridDay',
 }
 
-export function CalendarView() {
+interface CalendarViewProps {
+  onSelectTask: (selection: TaskSelection | null) => void
+}
+
+export function CalendarView({ onSelectTask }: CalendarViewProps) {
   const { view, currentDate, setView, setCurrentDate } = useCalendarStore()
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const tasks = useLiveQuery(getScheduledTasks, []) ?? []
@@ -82,6 +88,17 @@ export function CalendarView() {
 
     await updateTaskSchedule(info.event.id, info.event.start, info.event.end)
   }, [])
+
+  const handleEventClick = useCallback(
+    (info: EventClickArg) => {
+      if (editingTaskId === info.event.id) return
+      onSelectTask({
+        taskId: info.event.id,
+        anchorEl: info.el,
+      })
+    },
+    [editingTaskId, onSelectTask],
+  )
 
   const renderEventContent = useCallback(
     (arg: EventContentArg) => (
@@ -139,6 +156,7 @@ export function CalendarView() {
         nowIndicator
         events={events}
         eventContent={renderEventContent}
+        eventClick={handleEventClick}
         datesSet={handleDatesSet}
         select={handleSelect}
         eventDrop={handleEventDrop}

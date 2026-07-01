@@ -28,6 +28,10 @@ body {
   height: 2.25rem;
 }
 
+.fc .fc-scroller {
+  position: relative;
+}
+
 .fc .fc-timegrid-slot-label {
   vertical-align: top;
 }

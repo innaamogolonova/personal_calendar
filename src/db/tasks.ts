@@ -39,6 +39,34 @@ export async function createTask(input: {
   return task
 }
 
+export async function getTaskById(id: string): Promise<Task | undefined> {
+  return db.tasks.get(id)
+}
+
+export async function updateTask(
+  id: string,
+  updates: Partial<
+    Pick<
+      Task,
+      | 'title'
+      | 'status'
+      | 'priority'
+      | 'scheduledStart'
+      | 'scheduledEnd'
+      | 'dueDate'
+      | 'notes'
+      | 'projectId'
+      | 'pageId'
+    >
+  >,
+): Promise<void> {
+  await db.tasks.update(id, {
+    ...updates,
+    ...(updates.title != null ? { title: updates.title.trim() } : {}),
+    updatedAt: now(),
+  })
+}
+
 export async function updateTaskTitle(id: string, title: string): Promise<void> {
   await db.tasks.update(id, {
     title: title.trim(),
