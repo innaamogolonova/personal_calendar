@@ -82,8 +82,17 @@ export function CalendarView() {
         dayMaxEvents
         weekends
         allDaySlot={false}
-        slotMinTime="06:00:00"
-        slotMaxTime="22:00:00"
+        slotMinTime="05:00:00"
+        slotMaxTime="24:00:00"
+        slotDuration="01:00:00"
+        snapDuration="00:15:00"
+        slotLabelInterval="01:00"
+        slotLabelFormat={{
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }}
+        expandRows={false}
         nowIndicator
         events={events}
         datesSet={handleDatesSet}

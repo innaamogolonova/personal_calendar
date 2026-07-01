@@ -18,3 +18,11 @@ body {
   --fc-event-bg-color: #2563eb;
   --fc-event-border-color: #1d4ed8;
 }
+
+.fc .fc-timegrid-slot {
+  height: 48px;
+}
+
+.fc .fc-timegrid-slot.fc-scrollgrid-shrink {
+  height: 2.25rem;
+}
