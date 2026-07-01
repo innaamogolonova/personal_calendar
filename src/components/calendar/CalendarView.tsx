@@ -7,6 +7,7 @@ import type {
   DateSelectArg,
   DatesSetArg,
   EventChangeArg,
+  EventContentArg,
   EventDropArg,
 } from '@fullcalendar/core'
 import { useLiveQuery } from 'dexie-react-hooks'
@@ -20,6 +21,8 @@ const viewMap: Record<string, CalendarView> = {
   timeGridWeek: 'timeGridWeek',
   timeGridDay: 'timeGridDay',
 }
+
+const MIN_DURATION_FOR_TIME_MS = 30 * 60 * 1000
 
 export function CalendarView() {
   const { view, currentDate, setView, setCurrentDate } = useCalendarStore()
@@ -58,6 +61,23 @@ export function CalendarView() {
     await updateTaskSchedule(info.event.id, info.event.start, info.event.end)
   }, [])
 
+  const renderEventContent = useCallback((arg: EventContentArg) => {
+    const start = arg.event.start
+    const end = arg.event.end
+    const durationMs =
+      start && end ? end.getTime() - start.getTime() : 0
+    const showTime = durationMs >= MIN_DURATION_FOR_TIME_MS && arg.timeText
+
+    return (
+      <div className="event-content-stack">
+        <div className="event-title">{arg.event.title}</div>
+        {showTime ? (
+          <div className="event-time-muted">{arg.timeText}</div>
+        ) : null}
+      </div>
+    )
+  }, [])
+
   return (
     <div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm">
       <FullCalendar
@@ -92,9 +112,16 @@ export function CalendarView() {
           minute: '2-digit',
           hour12: false,
         }}
+        eventTimeFormat={{
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        }}
+        displayEventEnd
         expandRows={false}
         nowIndicator
         events={events}
+        eventContent={renderEventContent}
         datesSet={handleDatesSet}
         select={handleSelect}
         eventDrop={handleEventDrop}
