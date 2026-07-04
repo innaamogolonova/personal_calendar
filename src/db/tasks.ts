@@ -1,8 +1,12 @@
 import { db } from './database'
-import type { Task, TaskPriority, TaskStatus } from './types'
+import type { Task, TaskPriority } from './types'
 
 function now() {
   return new Date()
+}
+
+export function isValidTaskTitle(title: string): boolean {
+  return title.trim().length > 0
 }
 
 export async function getAllTasks(): Promise<Task[]> {
@@ -18,23 +22,25 @@ export async function getScheduledTasks(): Promise<Task[]> {
 
 export async function createTask(input: {
   title: string
-  scheduledStart: Date
-  scheduledEnd: Date
-  status?: TaskStatus
+  completed?: boolean
+  scheduledStart?: Date
+  scheduledEnd?: Date
   priority?: TaskPriority
   projectId?: string
+  labelIds?: string[]
   pageId?: string
 }): Promise<Task> {
   const timestamp = now()
   const task: Task = {
     id: crypto.randomUUID(),
     title: input.title.trim(),
+    completed: input.completed ?? false,
     projectId: input.projectId,
     pageId: input.pageId,
-    status: input.status ?? 'todo',
-    priority: input.priority ?? 'medium',
+    priority: input.priority,
     scheduledStart: input.scheduledStart,
     scheduledEnd: input.scheduledEnd,
+    labelIds: input.labelIds ?? [],
     sortOrder: Date.now(),
     createdAt: timestamp,
     updatedAt: timestamp,
@@ -54,17 +60,20 @@ export async function updateTask(
     Pick<
       Task,
       | 'title'
-      | 'status'
+      | 'completed'
       | 'priority'
       | 'scheduledStart'
       | 'scheduledEnd'
-      | 'dueDate'
-      | 'notes'
       | 'projectId'
+      | 'labelIds'
       | 'pageId'
     >
   >,
 ): Promise<void> {
+  if (updates.title != null && !isValidTaskTitle(updates.title)) {
+    throw new Error('Task name is required')
+  }
+
   await db.tasks.update(id, {
     ...updates,
     ...(updates.title != null ? { title: updates.title.trim() } : {}),
@@ -73,8 +82,16 @@ export async function updateTask(
 }
 
 export async function updateTaskTitle(id: string, title: string): Promise<void> {
+  if (!isValidTaskTitle(title)) return
   await db.tasks.update(id, {
     title: title.trim(),
+    updatedAt: now(),
+  })
+}
+
+export async function updateTaskCompleted(id: string, completed: boolean): Promise<void> {
+  await db.tasks.update(id, {
+    completed,
     updatedAt: now(),
   })
 }
@@ -92,5 +109,13 @@ export async function updateTaskSchedule(
     scheduledStart,
     scheduledEnd,
     updatedAt: now(),
+  })
+}
+
+export async function clearTaskSchedule(id: string): Promise<void> {
+  await db.tasks.where('id').equals(id).modify((task) => {
+    delete task.scheduledStart
+    delete task.scheduledEnd
+    task.updatedAt = now()
   })
 }

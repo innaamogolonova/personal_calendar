@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { deleteTask, getTaskById } from '../../db/tasks'
+import { getAllLabels } from '../../db/labels'
+import { getAllProjects } from '../../db/projects'
+import { deleteTask, getTaskById, updateTaskCompleted } from '../../db/tasks'
 import { formatScheduledRange } from '../../lib/dates'
 import {
   findCalendarScrollContainer,
   getAnchoredPopoverPosition,
   getScrollTargets,
 } from '../../lib/popoverPosition'
-import { PRIORITY_LABELS, STATUS_LABELS } from '../../lib/taskLabels'
+import { PRIORITY_LABELS } from '../../lib/taskLabels'
 
 interface PopoverPosition {
   top: number
@@ -31,6 +33,8 @@ export function TaskEventPopover({
 }: TaskEventPopoverProps) {
   const popoverRef = useRef<HTMLDivElement>(null)
   const task = useLiveQuery(() => getTaskById(taskId), [taskId])
+  const projects = useLiveQuery(getAllProjects, []) ?? []
+  const labels = useLiveQuery(getAllLabels, []) ?? []
   const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
   const [position, setPosition] = useState<PopoverPosition | null>(null)
 
@@ -87,7 +91,19 @@ export function TaskEventPopover({
     onClose()
   }
 
+  const handleToggleCompleted = async (completed: boolean) => {
+    await updateTaskCompleted(taskId, completed)
+  }
+
   if (!portalTarget || !position) return null
+
+  const projectName = task?.projectId
+    ? projects.find((p) => p.id === task.projectId)?.name
+    : undefined
+
+  const taskLabels = task
+    ? labels.filter((l) => task.labelIds.includes(l.id)).map((l) => l.name)
+    : []
 
   const popover = (
     <div
@@ -105,9 +121,23 @@ export function TaskEventPopover({
       ) : !task ? null : (
         <>
           <div className="mb-3 flex items-start justify-between gap-2">
-            <h3 className="text-sm font-semibold text-neutral-900">
-              {task.title || 'Untitled'}
-            </h3>
+            <label className="flex flex-1 items-start gap-2">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={(e) => handleToggleCompleted(e.target.checked)}
+                className="mt-0.5 rounded border-neutral-300"
+              />
+              <span
+                className={`text-sm font-semibold ${
+                  task.completed
+                    ? 'text-neutral-400 line-through'
+                    : 'text-neutral-900'
+                }`}
+              >
+                {task.title || 'Untitled'}
+              </span>
+            </label>
             <button
               type="button"
               onClick={onClose}
@@ -127,20 +157,47 @@ export function TaskEventPopover({
                 </dd>
               </div>
             )}
-            <div>
-              <dt className="text-xs font-medium text-neutral-500">Status</dt>
-              <dd className="mt-0.5 text-neutral-700">{STATUS_LABELS[task.status]}</dd>
-            </div>
-            <div>
-              <dt className="text-xs font-medium text-neutral-500">Priority</dt>
-              <dd className="mt-0.5 text-neutral-700">
-                {PRIORITY_LABELS[task.priority]}
-              </dd>
-            </div>
-            {task.notes && (
+            {task.priority && (
               <div>
-                <dt className="text-xs font-medium text-neutral-500">Notes</dt>
-                <dd className="mt-0.5 line-clamp-3 text-neutral-700">{task.notes}</dd>
+                <dt className="text-xs font-medium text-neutral-500">Priority</dt>
+                <dd className="mt-0.5 text-neutral-700">
+                  {PRIORITY_LABELS[task.priority]}
+                </dd>
+              </div>
+            )}
+            {projectName && (
+              <div>
+                <dt className="text-xs font-medium text-neutral-500">Project</dt>
+                <dd className="mt-0.5 inline-flex items-center gap-1.5 text-neutral-700">
+                  <span
+                    className="inline-block h-2 w-2 rounded-full"
+                    style={{
+                      backgroundColor: projects.find((p) => p.id === task.projectId)?.color,
+                    }}
+                  />
+                  {projectName}
+                </dd>
+              </div>
+            )}
+            {taskLabels.length > 0 && (
+              <div>
+                <dt className="text-xs font-medium text-neutral-500">Labels</dt>
+                <dd className="mt-0.5 flex flex-wrap gap-1">
+                  {labels
+                    .filter((l) => task.labelIds.includes(l.id))
+                    .map((label) => (
+                      <span
+                        key={label.id}
+                        className="inline-flex items-center gap-1 rounded-md border border-neutral-200 px-1.5 py-0.5 text-xs text-neutral-700"
+                      >
+                        <span
+                          className="inline-block h-1.5 w-1.5 rounded-full"
+                          style={{ backgroundColor: label.color }}
+                        />
+                        {label.name}
+                      </span>
+                    ))}
+                </dd>
               </div>
             )}
           </dl>

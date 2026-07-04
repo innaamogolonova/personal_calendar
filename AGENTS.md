@@ -30,9 +30,12 @@ Tasks are a **single source of truth**: scheduling on the calendar updates the s
 
 ## Data model
 
-- **projects** — top-level workspaces
-- **pages** — nested tree within a project (`parentPageId`)
-- **tasks** — shared across calendar, task list, and project views (`scheduledStart` / `scheduledEnd` for calendar placement)
+- **projects** — top-level workspaces (`name`)
+- **labels** — tags for tasks (`name`)
+- **pages** — nested tree within a project (`parentPageId`) — not yet in UI
+- **tasks** — shared across calendar, task list, and project views
+  - Required: `completed` (boolean), `title` (task name)
+  - Optional: `scheduledStart` / `scheduledEnd`, `priority`, `projectId`, `labelIds[]`
 
 ## Conventions
 
@@ -53,4 +56,12 @@ Calendar sync to task list functionality
 - [ ] Project label for tasks 
 - [ ] Project nested structure 
 - [ ] Properties and filtering for task list 
+- [ ] Have a daily display of some sort
 - [ ] TBD 
+
+## Next improvements after MVP (ONLY DEVELOPER EDITS): 
+- [ ] Styling
+    - colors for labels/projects
+    - overall more sleek look 
+- [ ] Multiple select on tasks
+- [ ] Multiple views

@@ -1,17 +1,29 @@
-export type TaskStatus = 'todo' | 'in_progress' | 'done'
 export type TaskPriority = 'low' | 'medium' | 'high'
+
+export interface Project {
+  id: string
+  name: string
+  color: string
+  sortOrder: number
+  createdAt: Date
+}
+
+export interface Label {
+  id: string
+  name: string
+  color: string
+}
 
 export interface Task {
   id: string
+  completed: boolean
   title: string
-  projectId?: string
-  pageId?: string
-  status: TaskStatus
-  priority: TaskPriority
   scheduledStart?: Date
   scheduledEnd?: Date
-  dueDate?: Date
-  notes?: string
+  priority?: TaskPriority
+  projectId?: string
+  labelIds: string[]
+  pageId?: string
   sortOrder: number
   createdAt: Date
   updatedAt: Date
