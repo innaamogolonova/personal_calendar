@@ -23,6 +23,27 @@ npm install
 npm run dev
 ```
 
+## Structure
+
+```
+src/
+├── App.tsx              # Routes
+├── layouts/             # App shell + sidebar
+├── pages/               # Route screens (calendar, tasks, projects, pages)
+├── components/
+│   ├── calendar/        # FullCalendar UI
+│   ├── pages/           # Block markdown editor
+│   ├── sidebar/         # Project / page tree
+│   ├── tasks/           # Task list, edit panel, popovers
+│   └── shared/          # EntityEditPopover, ColorPicker
+├── db/                  # Dexie schema + CRUD (tasks, projects, pages, labels)
+├── lib/                 # Pure helpers (markdown, dates, colors, events)
+└── stores/              # Zustand UI state (calendar view, sidebar expand)
+```
+
+Routes: `/calendar`, `/tasks`, `/projects`, `/projects/:projectId`, `/projects/:projectId/pages/:pageId`
+
+Data lives in IndexedDB (Dexie). See [AGENTS.md](./AGENTS.md) for data model, editor conventions, and more detail.
 
 ## Plan: 
 

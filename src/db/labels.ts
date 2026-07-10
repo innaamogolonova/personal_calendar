@@ -7,10 +7,6 @@ export async function getAllLabels(): Promise<Label[]> {
   return labels.sort((a, b) => a.name.localeCompare(b.name))
 }
 
-export async function getLabelById(id: string): Promise<Label | undefined> {
-  return db.labels.get(id)
-}
-
 export async function findLabelByName(name: string): Promise<Label | undefined> {
   const normalized = name.trim().toLowerCase()
   if (!normalized) return undefined

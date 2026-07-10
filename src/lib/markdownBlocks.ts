@@ -19,7 +19,7 @@ export interface Block {
 
 const INDENT_SIZE = 2
 
-export function createBlockId(): string {
+function createBlockId(): string {
   return crypto.randomUUID()
 }
 
@@ -27,7 +27,7 @@ export function createEmptyBlock(): Block {
   return { id: createBlockId(), type: 'paragraph', content: '', indent: 0 }
 }
 
-export function parseLine(raw: string): Block {
+function parseLine(raw: string): Block {
   const id = createBlockId()
   const indentMatch = raw.match(/^( *)/)
   const indent = indentMatch ? Math.floor(indentMatch[1].length / INDENT_SIZE) : 0
@@ -93,7 +93,7 @@ export function markdownToBlocks(content: string): Block[] {
   return lines.map(parseLine)
 }
 
-export function usesLetterOrderedList(indent: number): boolean {
+function usesLetterOrderedList(indent: number): boolean {
   return indent % 2 === 1
 }
 
@@ -104,7 +104,7 @@ export function formatOrderedMarker(order: number, indent: number): string {
   return `${order}.`
 }
 
-export function blockToMarkdown(block: Block): string {
+function blockToMarkdown(block: Block): string {
   const indent = ' '.repeat(block.indent * INDENT_SIZE)
 
   switch (block.type) {

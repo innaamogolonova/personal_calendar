@@ -53,11 +53,3 @@ export function toggleInlineFormat(root: HTMLElement, format: 'bold' | 'italic')
   document.execCommand('styleWithCSS', false, 'false')
   document.execCommand(format, false)
 }
-
-export function isFormatActive(format: 'bold' | 'italic'): boolean {
-  try {
-    return document.queryCommandState(format)
-  } catch {
-    return false
-  }
-}

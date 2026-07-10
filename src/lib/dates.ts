@@ -1,9 +1,5 @@
 import { format, isSameDay } from 'date-fns'
 
-export function formatDateTime(date: Date): string {
-  return format(date, 'yyyy-MM-dd HH:mm')
-}
-
 const SCHEDULED_DATE_TIME = 'EEE MM/dd HH:mm'
 
 export function formatScheduledRange(start: Date, end: Date): string {

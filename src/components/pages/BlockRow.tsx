@@ -28,7 +28,7 @@ interface BlockRowProps {
   showPlaceholder: boolean
   onChange: (block: Block, cursor: CursorSnapshot | null) => void
   onEnter: (cursor: CursorSnapshot | null) => void
-  onBackspaceAtStart: (cursor: CursorSnapshot | null) => void
+  onBackspaceAtStart: () => void
   onTab: (cursor: CursorSnapshot | null) => void
   onShiftTab: (cursor: CursorSnapshot | null) => void
   onFocus: () => void
@@ -64,20 +64,13 @@ export function BlockRow({
     return captureCursor(block.id, root)
   }
 
-  const syncHtml = (content: string, preserveSelection = false) => {
+  const syncHtml = (content: string) => {
     const el = editorRef.current
     if (!el) return
 
-    const cursor = preserveSelection ? getCursor() : null
     const html = inlineMarkdownToHtml(content)
     if (el.innerHTML !== html) {
       el.innerHTML = html
-    }
-
-    if (preserveSelection && cursor && el) {
-      requestAnimationFrame(() => {
-        restoreCursor(el, cursor.offset)
-      })
     }
   }
 
@@ -193,7 +186,7 @@ export function BlockRow({
       }
       if (content === '' || isAtStart()) {
         e.preventDefault()
-        onBackspaceAtStart(getCursor())
+        onBackspaceAtStart()
         return
       }
     }
