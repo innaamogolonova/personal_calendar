@@ -6,6 +6,7 @@ import { createPage, deletePage, getChildPages } from '../../db/pages'
 import { useSidebarStore } from '../../stores/sidebarStore'
 import { pagePaddingLeft } from './constants'
 import { ChevronIcon, MoreIcon, PageIcon } from './icons'
+import { PageDocumentOutline } from './PageDocumentOutline'
 
 const pageNavLinkClass = ({ isActive }: { isActive: boolean }) =>
   `flex min-w-0 flex-1 items-center gap-2 rounded-md py-1.5 pr-1 text-sm transition-colors ${
@@ -25,12 +26,15 @@ export function PageSidebarNode({ page, projectId, depth }: PageSidebarNodeProps
   const navigate = useNavigate()
   const children = useLiveQuery(() => getChildPages(page.id), [page.id]) ?? []
   const expandedPages = useSidebarStore((s) => s.expandedPages)
+  const outlinePages = useSidebarStore((s) => s.outlinePages)
   const togglePage = useSidebarStore((s) => s.togglePage)
   const expandPage = useSidebarStore((s) => s.expandPage)
+  const toggleOutline = useSidebarStore((s) => s.toggleOutline)
   const [showMenu, setShowMenu] = useState(false)
 
   const pagePath = `/projects/${projectId}/pages/${page.id}`
   const isExpanded = expandedPages[page.id] ?? false
+  const showOutline = outlinePages[page.id] ?? false
   const hasChildren = children.length > 0
   const paddingLeft = pagePaddingLeft(depth)
 
@@ -39,6 +43,11 @@ export function PageSidebarNode({ page, projectId, depth }: PageSidebarNodeProps
     expandPage(page.id)
     setShowMenu(false)
     navigate(`/projects/${projectId}/pages/${newPage.id}`)
+  }
+
+  const handleToggleOutline = () => {
+    toggleOutline(page.id)
+    setShowMenu(false)
   }
 
   const handleDelete = async () => {
@@ -76,7 +85,7 @@ export function PageSidebarNode({ page, projectId, depth }: PageSidebarNodeProps
           <span className="min-w-0 truncate">{page.title}</span>
         </NavLink>
 
-        <div className="relative shrink-0 opacity-0 transition-opacity group-hover/page:opacity-100">
+        <div className="relative shrink-0 opacity-0 transition-opacity group-hover/page:opacity-100 focus-within:opacity-100">
           <button
             type="button"
             onClick={() => setShowMenu((v) => !v)}
@@ -88,13 +97,20 @@ export function PageSidebarNode({ page, projectId, depth }: PageSidebarNodeProps
           {showMenu && (
             <>
               <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-              <div className="absolute right-0 top-full z-20 mt-1 w-36 rounded-md border border-neutral-200 bg-white py-1 shadow-lg">
+              <div className="absolute right-0 top-full z-20 mt-1 w-40 rounded-md border border-neutral-200 bg-white py-1 shadow-lg">
                 <button
                   type="button"
                   onClick={() => void handleAddSubpage()}
                   className="w-full px-3 py-1.5 text-left text-sm hover:bg-neutral-50"
                 >
                   Add subpage
+                </button>
+                <button
+                  type="button"
+                  onClick={handleToggleOutline}
+                  className="w-full px-3 py-1.5 text-left text-sm hover:bg-neutral-50"
+                >
+                  {showOutline ? 'Hide outline' : 'Show outline'}
                 </button>
                 <button
                   type="button"
@@ -108,6 +124,15 @@ export function PageSidebarNode({ page, projectId, depth }: PageSidebarNodeProps
           )}
         </div>
       </div>
+
+      {showOutline && (
+        <PageDocumentOutline
+          content={page.content}
+          depth={depth}
+          pageId={page.id}
+          projectId={projectId}
+        />
+      )}
 
       {isExpanded &&
         hasChildren &&

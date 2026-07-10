@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { deletePage, getChildPages, getPageById, updatePage } from '../db/pages'
 import { getProjectById } from '../db/projects'
+import { scrollToOutlineHeading } from '../lib/markdownBlocks'
 import { useSidebarStore } from '../stores/sidebarStore'
 import { BlockTextEditor } from '../components/pages/BlockTextEditor'
 
@@ -25,6 +26,8 @@ export function ProjectSubpagePage() {
   const [title, setTitle] = useState('')
   const expandProject = useSidebarStore((s) => s.expandProject)
   const expandPage = useSidebarStore((s) => s.expandPage)
+  const pendingOutlineScroll = useSidebarStore((s) => s.pendingOutlineScroll)
+  const setPendingOutlineScroll = useSidebarStore((s) => s.setPendingOutlineScroll)
 
   const project = useLiveQuery(
     () => (projectId ? getProjectById(projectId) : undefined),
@@ -42,6 +45,28 @@ export function ProjectSubpagePage() {
     setTitle(page.title)
     void expandAncestorPages(page.id, expandPage)
   }, [page?.id, expandPage])
+
+  useEffect(() => {
+    if (!pageId || !page || !pendingOutlineScroll || pendingOutlineScroll.pageId !== pageId) {
+      return
+    }
+
+    const headingIndex = pendingOutlineScroll.headingIndex
+    let attempts = 0
+    const tryScroll = () => {
+      if (scrollToOutlineHeading(headingIndex)) {
+        setPendingOutlineScroll(null)
+        return
+      }
+      attempts += 1
+      if (attempts < 30) {
+        requestAnimationFrame(tryScroll)
+      } else {
+        setPendingOutlineScroll(null)
+      }
+    }
+    requestAnimationFrame(tryScroll)
+  }, [pageId, page, content, pendingOutlineScroll, setPendingOutlineScroll])
 
   const scheduleSave = useCallback(
     (updates: { content?: string; title?: string }) => {

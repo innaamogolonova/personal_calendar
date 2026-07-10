@@ -93,6 +93,72 @@ export function markdownToBlocks(content: string): Block[] {
   return lines.map(parseLine)
 }
 
+export interface OutlineHeading {
+  level: 1 | 2 | 3
+  text: string
+  /** 0-based index among headings in the document (for scroll targets). */
+  index: number
+}
+
+function stripInlineMarkdown(text: string): string {
+  return text
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .trim()
+}
+
+/** Plain heading text used for outline display and index matching. */
+export function outlineHeadingText(content: string): string {
+  return stripInlineMarkdown(content)
+}
+
+export function isHeadingBlockType(type: BlockType): type is 'h1' | 'h2' | 'h3' {
+  return type === 'h1' || type === 'h2' || type === 'h3'
+}
+
+/** Extract heading hierarchy from page/project markdown for the sidebar outline. */
+export function extractDocumentOutline(content: string): OutlineHeading[] {
+  if (!content) return []
+
+  const headings: OutlineHeading[] = []
+  for (const line of content.split('\n')) {
+    const trimmed = line.trimStart()
+    let level: 1 | 2 | 3 | null = null
+    let text = ''
+
+    if (trimmed.startsWith('### ')) {
+      level = 3
+      text = trimmed.slice(4)
+    } else if (trimmed.startsWith('## ')) {
+      level = 2
+      text = trimmed.slice(3)
+    } else if (trimmed.startsWith('# ')) {
+      level = 1
+      text = trimmed.slice(2)
+    }
+
+    if (level == null) continue
+    const cleaned = outlineHeadingText(text)
+    if (cleaned) {
+      headings.push({ level, text: cleaned, index: headings.length })
+    }
+  }
+
+  return headings
+}
+
+/** Scroll the main editor to the nth heading (matches `data-outline-heading`). */
+export function scrollToOutlineHeading(headingIndex: number): boolean {
+  const el = document.querySelector<HTMLElement>(
+    `[data-outline-heading="${headingIndex}"]`,
+  )
+  if (!el) return false
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  const editable = el.querySelector<HTMLElement>('[contenteditable="true"]')
+  editable?.focus()
+  return true
+}
+
 function usesLetterOrderedList(indent: number): boolean {
   return indent % 2 === 1
 }

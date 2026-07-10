@@ -34,12 +34,17 @@ function saveLayout(layout: PersistedLayout): void {
 interface SidebarState {
   expandedProjects: Record<string, boolean>
   expandedPages: Record<string, boolean>
+  outlinePages: Record<string, boolean>
+  /** After navigating to a page, scroll to this outline heading index. */
+  pendingOutlineScroll: { pageId: string; headingIndex: number } | null
   width: number
   collapsed: boolean
   toggleProject: (projectId: string) => void
   togglePage: (pageId: string) => void
   expandProject: (projectId: string) => void
   expandPage: (pageId: string) => void
+  toggleOutline: (pageId: string) => void
+  setPendingOutlineScroll: (target: { pageId: string; headingIndex: number } | null) => void
   setWidth: (width: number) => void
   setCollapsed: (collapsed: boolean) => void
   toggleCollapsed: () => void
@@ -50,6 +55,8 @@ const initial = loadLayout()
 export const useSidebarStore = create<SidebarState>((set, get) => ({
   expandedProjects: {},
   expandedPages: {},
+  outlinePages: {},
+  pendingOutlineScroll: null,
   width: initial.width,
   collapsed: initial.collapsed,
 
@@ -78,6 +85,16 @@ export const useSidebarStore = create<SidebarState>((set, get) => ({
     set((state) => ({
       expandedPages: { ...state.expandedPages, [pageId]: true },
     })),
+
+  toggleOutline: (pageId) =>
+    set((state) => ({
+      outlinePages: {
+        ...state.outlinePages,
+        [pageId]: !state.outlinePages[pageId],
+      },
+    })),
+
+  setPendingOutlineScroll: (target) => set({ pendingOutlineScroll: target }),
 
   setWidth: (width) => {
     const next = Math.min(SIDEBAR_MAX_WIDTH, Math.max(SIDEBAR_MIN_WIDTH, width))

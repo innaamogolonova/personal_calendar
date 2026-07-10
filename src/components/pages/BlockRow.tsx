@@ -26,6 +26,7 @@ interface BlockRowProps {
   block: Block
   placeholder?: string
   showPlaceholder: boolean
+  outlineHeadingIndex?: number
   onChange: (block: Block, cursor: CursorSnapshot | null) => void
   onEnter: (cursor: CursorSnapshot | null) => void
   onBackspaceAtStart: () => void
@@ -42,6 +43,7 @@ export function BlockRow({
   block,
   placeholder,
   showPlaceholder,
+  outlineHeadingIndex,
   onChange,
   onEnter,
   onBackspaceAtStart,
@@ -228,7 +230,12 @@ export function BlockRow({
     ) : null
 
   return (
-    <div className="flex items-start gap-1 py-0.5">
+    <div
+      className="flex scroll-mt-6 items-start gap-1 py-0.5"
+      data-outline-heading={
+        outlineHeadingIndex != null ? String(outlineHeadingIndex) : undefined
+      }
+    >
       {prefix}
       <div className="relative min-w-0 flex-1">
         {showPlaceholder && !block.content && (

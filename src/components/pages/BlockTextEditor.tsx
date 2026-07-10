@@ -5,8 +5,10 @@ import {
   continueBlockOnEnter,
   createEmptyBlock,
   indentBlock,
+  isHeadingBlockType,
   isListType,
   markdownToBlocks,
+  outlineHeadingText,
   outdentBlock,
   renumberOrderedLists,
 } from '../../lib/markdownBlocks'
@@ -246,26 +248,36 @@ export function BlockTextEditor({
 
   return (
     <div className={minHeightClass}>
-      {blocks.map((block, index) => (
-        <BlockRow
-          key={block.id}
-          block={block}
-          placeholder={placeholder}
-          showPlaceholder={index === 0 && blocks.length === 1}
-          focusOnMount={focusBlockId === block.id}
-          restoreCursor={
-            cursorRestore?.blockId === block.id ? cursorRestore.offset : undefined
-          }
-          onCursorRestored={clearCursorRestore}
-          onChange={(updated, cursor) => updateBlock(index, updated, cursor)}
-          onEnter={(cursor) => handleEnter(index, cursor)}
-          onBackspaceAtStart={() => handleBackspaceAtStart(index)}
-          onTab={(cursor) => handleTab(index, cursor)}
-          onShiftTab={(cursor) => handleShiftTab(index, cursor)}
-          onFocus={() => setFocusBlockId(null)}
-          onUndo={(cursor) => undo(cursor)}
-        />
-      ))}
+      {(() => {
+        let headingIndex = 0
+        return blocks.map((block, index) => {
+          const outlineHeadingIndex =
+            isHeadingBlockType(block.type) && outlineHeadingText(block.content)
+              ? headingIndex++
+              : undefined
+          return (
+            <BlockRow
+              key={block.id}
+              block={block}
+              placeholder={placeholder}
+              showPlaceholder={index === 0 && blocks.length === 1}
+              outlineHeadingIndex={outlineHeadingIndex}
+              focusOnMount={focusBlockId === block.id}
+              restoreCursor={
+                cursorRestore?.blockId === block.id ? cursorRestore.offset : undefined
+              }
+              onCursorRestored={clearCursorRestore}
+              onChange={(updated, cursor) => updateBlock(index, updated, cursor)}
+              onEnter={(cursor) => handleEnter(index, cursor)}
+              onBackspaceAtStart={() => handleBackspaceAtStart(index)}
+              onTab={(cursor) => handleTab(index, cursor)}
+              onShiftTab={(cursor) => handleShiftTab(index, cursor)}
+              onFocus={() => setFocusBlockId(null)}
+              onUndo={(cursor) => undo(cursor)}
+            />
+          )
+        })
+      })()}
     </div>
   )
 }
