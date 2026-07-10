@@ -4,6 +4,7 @@ export interface Project {
   id: string
   name: string
   color: string
+  content: string
   sortOrder: number
   createdAt: Date
 }

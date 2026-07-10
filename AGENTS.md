@@ -43,25 +43,31 @@ Tasks are a **single source of truth**: scheduling on the calendar updates the s
 - Keep diffs focused; match existing patterns in the codebase.
 - Local-first: assume offline, single-browser use unless explicitly adding sync.
 
-## Current task (ONLY DEVELOPER EDITS)
+## Current task (AGENT DO NOT EDIT)
 > update with next step when current is completed
 
-Calendar sync to task list functionality 
+Project nested structure 
 
-## MVP high level next steps (ONLY DEVELOPER EDITS): 
+## MVP high level next steps (AGENT DO NOT EDIT): 
 - [x] Figure out tech stack 
 - [x] Start repo, create context page (AGENTS.md) and README.md
 - [x] Create basic calendar view 
-- [ ] Calendar sync to task list functionality 
-- [ ] Project label for tasks 
+- [x] Calendar sync to task list functionality 
+- [x] Project label for tasks 
 - [ ] Project nested structure 
-- [ ] Properties and filtering for task list 
+- [ ] Filtering and different views for the task list 
 - [ ] Have a daily display of some sort
 - [ ] TBD 
 
-## Next improvements after MVP (ONLY DEVELOPER EDITS): 
+## Next improvements after MVP (AGENT DO NOT EDIT): 
 - [ ] Styling
     - colors for labels/projects
     - overall more sleek look 
-- [ ] Multiple select on tasks
+- [ ] Multiple select on tasks to allow for batch edits/deletions 
 - [ ] Multiple views
+- [ ] More reliable non-browser db (Django??)
+
+## Nice haves: 
+- [ ] Global search 
+- [ ] keyboard commands 
+- [ ] finding and linking an existing task on the calendar 

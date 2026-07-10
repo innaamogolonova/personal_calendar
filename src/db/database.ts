@@ -39,4 +39,10 @@ db.version(3).upgrade(async (tx) => {
   })
 })
 
+db.version(4).upgrade(async (tx) => {
+  await tx.table('projects').toCollection().modify((project: Record<string, unknown>) => {
+    if (project.content == null) project.content = ''
+  })
+})
+
 export { db }

@@ -26,6 +26,7 @@ export async function createProject(
     id: crypto.randomUUID(),
     name: name.trim(),
     color,
+    content: '',
     sortOrder: Date.now(),
     createdAt: new Date(),
   }
@@ -43,7 +44,7 @@ export async function getOrCreateProject(name: string): Promise<Project> {
 
 export async function updateProject(
   id: string,
-  updates: Partial<Pick<Project, 'name' | 'color'>>,
+  updates: Partial<Pick<Project, 'name' | 'color' | 'content'>>,
 ): Promise<void> {
   if (updates.name != null && !updates.name.trim()) {
     throw new Error('Project name is required')
