@@ -1,6 +1,9 @@
-import { NavLink, Outlet } from 'react-router-dom'
+import { useEffect } from 'react'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { getAllProjects } from '../db/projects'
+import { ProjectSidebarNode } from '../components/sidebar/ProjectSidebarNode'
+import { useSidebarStore } from '../stores/sidebarStore'
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `block rounded-md px-3 py-2 text-sm font-medium transition-colors ${
@@ -9,15 +12,15 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900'
   }`
 
-const projectNavLinkClass = ({ isActive }: { isActive: boolean }) =>
-  `block rounded-md py-1.5 pl-6 pr-3 text-sm transition-colors ${
-    isActive
-      ? 'bg-neutral-100 font-medium text-neutral-700'
-      : 'text-neutral-400 hover:bg-neutral-50 hover:text-neutral-600'
-  }`
-
 export function AppShell() {
   const projects = useLiveQuery(getAllProjects, []) ?? []
+  const location = useLocation()
+  const expandProject = useSidebarStore((s) => s.expandProject)
+
+  useEffect(() => {
+    const match = location.pathname.match(/^\/projects\/([^/]+)/)
+    if (match) expandProject(match[1])
+  }, [location.pathname, expandProject])
 
   return (
     <div className="flex min-h-screen">
@@ -36,22 +39,10 @@ export function AppShell() {
             Projects
           </NavLink>
           {projects.length === 0 ? (
-            <p className="px-3 py-1 pl-6 text-xs text-neutral-400">No projects yet</p>
+            <p className="px-3 py-1 pl-4 text-xs text-neutral-400">No projects yet</p>
           ) : (
             projects.map((project) => (
-              <NavLink
-                key={project.id}
-                to={`/projects/${project.id}`}
-                className={projectNavLinkClass}
-              >
-                <span className="flex items-center gap-2">
-                  <span
-                    className="h-1.5 w-1.5 shrink-0 rounded-full opacity-70"
-                    style={{ backgroundColor: project.color }}
-                  />
-                  {project.name}
-                </span>
-              </NavLink>
+              <ProjectSidebarNode key={project.id} project={project} />
             ))
           )}
         </nav>

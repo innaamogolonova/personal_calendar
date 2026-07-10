@@ -1,10 +1,11 @@
 import Dexie, { type EntityTable } from 'dexie'
-import type { Label, Project, Task } from './types'
+import type { Label, Page, Project, Task } from './types'
 
 const db = new Dexie('PersonalCalendar') as Dexie & {
   tasks: EntityTable<Task, 'id'>
   projects: EntityTable<Project, 'id'>
   labels: EntityTable<Label, 'id'>
+  pages: EntityTable<Page, 'id'>
 }
 
 db.version(1).stores({
@@ -43,6 +44,13 @@ db.version(4).upgrade(async (tx) => {
   await tx.table('projects').toCollection().modify((project: Record<string, unknown>) => {
     if (project.content == null) project.content = ''
   })
+})
+
+db.version(5).stores({
+  tasks: 'id, projectId, pageId, completed, scheduledStart, sortOrder',
+  projects: 'id, name, sortOrder',
+  labels: 'id, name',
+  pages: 'id, projectId, parentPageId, sortOrder',
 })
 
 export { db }

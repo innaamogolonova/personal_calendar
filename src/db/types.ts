@@ -15,6 +15,17 @@ export interface Label {
   color: string
 }
 
+export interface Page {
+  id: string
+  projectId: string
+  parentPageId?: string
+  title: string
+  content: string
+  sortOrder: number
+  createdAt: Date
+  updatedAt: Date
+}
+
 export interface Task {
   id: string
   completed: boolean

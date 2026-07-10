@@ -1,4 +1,5 @@
 import { db } from './database'
+import { deletePagesByProject } from './pages'
 import type { Project } from './types'
 import { DEFAULT_PROJECT_COLOR } from '../lib/colors'
 
@@ -56,11 +57,13 @@ export async function updateProject(
 }
 
 export async function deleteProject(id: string): Promise<void> {
-  await db.transaction('rw', db.tasks, db.projects, async () => {
+  await db.transaction('rw', db.tasks, db.projects, db.pages, async () => {
     await db.tasks.where('projectId').equals(id).modify((task) => {
       delete task.projectId
+      delete task.pageId
       task.updatedAt = new Date()
     })
+    await deletePagesByProject(id)
     await db.projects.delete(id)
   })
 }

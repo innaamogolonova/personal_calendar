@@ -22,3 +22,38 @@ Early development — basic calendar view is working. Task list and projects are
 npm install
 npm run dev
 ```
+
+
+## Plan: 
+
+### Current task:
+> update with next step when current is completed
+
+Project nested structure 
+
+### MVP high level next steps: 
+- [x] Figure out tech stack 
+- [x] Start repo, create context page (AGENTS.md) and README.md
+- [x] Create basic calendar view 
+- [x] Calendar sync to task list functionality 
+- [x] Project label for tasks 
+- [ ] Project nested structure 
+- [ ] Filtering and different views for the task list 
+- [ ] Have a daily display of some sort
+- [ ] TBD 
+
+### Next improvements after MVP: 
+- [ ] Styling
+    - colors for labels/projects
+    - overall more sleek look 
+- [ ] Multiple select on tasks to allow for batch edits/deletions 
+- [ ] Multiple views
+- [ ] More reliable non-browser db (Django??)
+
+### Nice haves: 
+- [ ] Global search 
+- [ ] keyboard commands 
+- [ ] finding and linking an existing task on the calendar 
+
+### Decisions, resolve later: 
+- links between some tasks and pages
