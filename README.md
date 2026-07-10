@@ -38,7 +38,7 @@ Project nested structure
 - [x] Calendar sync to task list functionality 
 - [x] Project label for tasks 
 - [ ] Project nested structure 
-- [ ] Filtering and different views for the task list 
+- [ ] Filtering for the task list 
 - [ ] Have a daily display of some sort
 - [ ] TBD 
 
@@ -46,8 +46,10 @@ Project nested structure
 - [ ] Styling
     - colors for labels/projects
     - overall more sleek look 
+    - the pop up screens are ugly and anchored to the top 
+    - a lot of styling issues i would like to fix, but can't list all of them off the top of my head 
 - [ ] Multiple select on tasks to allow for batch edits/deletions 
-- [ ] Multiple views
+- [ ] Multiple view options on pages 
 - [ ] More reliable non-browser db (Django??)
 
 ### Nice haves: 

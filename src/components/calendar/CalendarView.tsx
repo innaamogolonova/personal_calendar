@@ -130,6 +130,7 @@ export function CalendarView({ onSelectTask }: CalendarViewProps) {
           day: 'Day',
         }}
         height="auto"
+        firstDay={1}
         editable
         selectable
         selectMirror
