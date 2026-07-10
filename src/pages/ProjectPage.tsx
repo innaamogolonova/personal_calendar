@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { getProjectById, updateProject } from '../db/projects'
+import { FormattedTextEditor } from '../components/pages/FormattedTextEditor'
 
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -49,12 +50,10 @@ export function ProjectPage() {
         <h1 className="text-2xl font-semibold text-neutral-900">{project.name}</h1>
       </div>
 
-      <textarea
-        value={content}
-        onChange={(e) => handleChange(e.target.value)}
-        placeholder="Start writing..."
-        spellCheck
-        className="block min-h-[calc(100vh-12rem)] w-full resize-none border-0 bg-transparent p-0 text-base leading-relaxed text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-0"
+      <FormattedTextEditor
+        content={content}
+        onChange={handleChange}
+        placeholder="Start writing... # heading, **bold**, *italic*, - list, > quote, - [ ] checklist"
       />
     </div>
   )

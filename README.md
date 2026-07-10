@@ -50,6 +50,8 @@ Project nested structure
     - a lot of styling issues i would like to fix, but can't list all of them off the top of my head 
 - [ ] Multiple select on tasks to allow for batch edits/deletions 
 - [ ] Multiple view options on pages 
+    - save views 
+    - have a kanban board as an option 
 - [ ] More reliable non-browser db (Django??)
 
 ### Nice haves: 

@@ -4,6 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { deletePage, getChildPages, getPageById, updatePage } from '../db/pages'
 import { getProjectById } from '../db/projects'
 import { useSidebarStore } from '../stores/sidebarStore'
+import { FormattedTextEditor } from '../components/pages/FormattedTextEditor'
 
 async function expandAncestorPages(
   pageId: string,
@@ -105,15 +106,14 @@ export function ProjectSubpagePage() {
         </button>
       </div>
 
-      <textarea
-        value={content}
-        onChange={(e) => {
-          setContent(e.target.value)
-          scheduleSave({ content: e.target.value })
+      <FormattedTextEditor
+        content={content}
+        onChange={(nextContent) => {
+          setContent(nextContent)
+          scheduleSave({ content: nextContent })
         }}
-        placeholder="Start writing..."
-        spellCheck
-        className="block min-h-[calc(100vh-14rem)] w-full resize-none border-0 bg-transparent p-0 text-base leading-relaxed text-neutral-800 placeholder:text-neutral-400 focus:outline-none focus:ring-0"
+        placeholder="Start writing... # heading, **bold**, *italic*, - list, > quote, - [ ] checklist"
+        minHeightClass="min-h-[calc(100vh-14rem)]"
       />
     </div>
   )
