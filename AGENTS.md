@@ -104,7 +104,7 @@ Key files: `components/pages/BlockTextEditor.tsx`, `BlockRow.tsx`, `lib/markdown
 |---|---|
 | Tasks, projects, pages, labels | Dexie / IndexedDB |
 | Calendar view + current date | `stores/calendarStore.ts` |
-| Sidebar expand/collapse | `stores/sidebarStore.ts` |
+| Sidebar tree expand + width/collapsed (persisted in `localStorage`) | `stores/sidebarStore.ts` |
 | Editor undo stack, focus block | Local React state in `BlockTextEditor` |
 
 Page saves are debounced (~400ms) in `ProjectPage` / `ProjectSubpagePage`.
