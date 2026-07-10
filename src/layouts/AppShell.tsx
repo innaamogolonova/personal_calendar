@@ -115,6 +115,9 @@ export function AppShell() {
             <NavLink to="/calendar" className={navLinkClass}>
               Calendar
             </NavLink>
+            <NavLink to="/daily" className={navLinkClass}>
+              Daily
+            </NavLink>
             <NavLink to="/tasks" className={navLinkClass}>
               Tasks
             </NavLink>

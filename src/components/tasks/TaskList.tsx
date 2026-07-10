@@ -7,11 +7,13 @@ import {
   updateTaskCompleted,
 } from '../../db/tasks'
 import type { Label, Project, Task } from '../../db/types'
-import { formatScheduledRange } from '../../lib/dates'
+import { formatScheduledRange, taskOverlapsDay } from '../../lib/dates'
 import { PRIORITY_LABELS } from '../../lib/taskLabels'
 
 interface TaskListProps {
   onSelectTask: (taskId: string) => void
+  /** When set, only show tasks scheduled on this calendar day. */
+  date?: Date
 }
 
 function formatScheduled(task: Task): string {
@@ -58,10 +60,14 @@ function labelsDisplay(labels: Label[], labelIds: string[]) {
   )
 }
 
-export function TaskList({ onSelectTask }: TaskListProps) {
+export function TaskList({ onSelectTask, date }: TaskListProps) {
   const tasks = useLiveQuery(getAllTasks, []) ?? []
   const projects = useLiveQuery(getAllProjects, []) ?? []
   const labels = useLiveQuery(getAllLabels, []) ?? []
+
+  const visibleTasks = date
+    ? tasks.filter((task) => taskOverlapsDay(task, date))
+    : tasks
 
   const handleToggleCompleted = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -79,10 +85,10 @@ export function TaskList({ onSelectTask }: TaskListProps) {
     await deleteTask(taskId)
   }
 
-  if (tasks.length === 0) {
+  if (visibleTasks.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-neutral-300 bg-white p-12 text-center text-neutral-500">
-        No tasks yet. Create one on the calendar.
+        {date ? 'No tasks scheduled for this day.' : 'No tasks yet. Create one on the calendar.'}
       </div>
     )
   }
@@ -102,7 +108,7 @@ export function TaskList({ onSelectTask }: TaskListProps) {
           </tr>
         </thead>
         <tbody className="divide-y divide-neutral-100">
-          {tasks.map((task) => (
+          {visibleTasks.map((task) => (
             <tr
               key={task.id}
               onClick={() => onSelectTask(task.id)}

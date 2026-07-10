@@ -41,16 +41,11 @@ src/
 └── stores/              # Zustand UI state (calendar view, sidebar expand)
 ```
 
-Routes: `/calendar`, `/tasks`, `/projects`, `/projects/:projectId`, `/projects/:projectId/pages/:pageId`
+Routes: `/calendar`, `/daily`, `/tasks`, `/projects`, `/projects/:projectId`, `/projects/:projectId/pages/:pageId`
 
 Data lives in IndexedDB (Dexie). See [AGENTS.md](./AGENTS.md) for data model, editor conventions, and more detail.
 
 ## Plan: 
-
-### Current task:
-> update with next step when current is completed
-
-Project nested structure 
 
 ### MVP high level next steps: 
 - [x] Figure out tech stack 
@@ -58,10 +53,9 @@ Project nested structure
 - [x] Create basic calendar view 
 - [x] Calendar sync to task list functionality 
 - [x] Project label for tasks 
-- [ ] Project nested structure 
+- [x] Project nested structure 
 - [ ] Filtering for the task list 
 - [ ] Have a daily display of some sort
-- [ ] TBD 
 
 ### Next improvements after MVP: 
 - [ ] Styling
@@ -74,11 +68,13 @@ Project nested structure
     - save views 
     - have a kanban board as an option 
 - [ ] More reliable non-browser db (Django??)
+- [ ] Testing suite and automatic testing in actions 
+- [ ] Publishing online? website?
 
 ### Nice haves: 
 - [ ] Global search 
-- [ ] keyboard commands 
-- [ ] finding and linking an existing task on the calendar 
+- [ ] Keyboard commands 
+- [ ] Finding and linking an existing task on the calendar 
 
 ### Decisions, resolve later: 
 - links between some tasks and pages

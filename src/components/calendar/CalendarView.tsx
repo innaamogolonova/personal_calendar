@@ -11,6 +11,7 @@ import type {
   EventContentArg,
   EventDropArg,
 } from '@fullcalendar/core'
+import { format } from 'date-fns'
 import { useLiveQuery } from 'dexie-react-hooks'
 import {
   getScheduledTasks,
@@ -22,10 +23,10 @@ import {
 import { tasksToEvents } from '../../lib/taskEvents'
 import { useCalendarStore } from '../../stores/calendarStore'
 import { CalendarEventContent } from './CalendarEventContent'
-import type { CalendarView } from '../../db/types'
+import type { CalendarView as CalendarViewType } from '../../db/types'
 import type { TaskSelection } from '../../types/taskSelection'
 
-const viewMap: Record<string, CalendarView> = {
+const viewMap: Record<string, CalendarViewType> = {
   dayGridMonth: 'dayGridMonth',
   timeGridWeek: 'timeGridWeek',
   timeGridDay: 'timeGridDay',
@@ -33,21 +34,39 @@ const viewMap: Record<string, CalendarView> = {
 
 interface CalendarViewProps {
   onSelectTask: (selection: TaskSelection | null) => void
+  /** Day-only mode for the Daily page (no month/week switcher). */
+  mode?: 'full' | 'day'
+  /** Controlled date when `mode="day"`. */
+  date?: Date
+  onDateChange?: (date: Date) => void
 }
 
-export function CalendarView({ onSelectTask }: CalendarViewProps) {
+export function CalendarView({
+  onSelectTask,
+  mode = 'full',
+  date,
+  onDateChange,
+}: CalendarViewProps) {
   const { view, currentDate, setView, setCurrentDate } = useCalendarStore()
   const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
   const tasks = useLiveQuery(getScheduledTasks, []) ?? []
   const events = tasksToEvents(tasks)
 
+  const isDayMode = mode === 'day'
+  const activeDate = isDayMode && date ? date : currentDate
+  const activeView = isDayMode ? 'timeGridDay' : view
+
   const handleDatesSet = useCallback(
     (info: DatesSetArg) => {
+      if (isDayMode) {
+        onDateChange?.(info.view.currentStart)
+        return
+      }
       setCurrentDate(info.view.currentStart)
       const nextView = viewMap[info.view.type]
       if (nextView) setView(nextView)
     },
-    [setCurrentDate, setView],
+    [isDayMode, onDateChange, setCurrentDate, setView],
   )
 
   const handleSelect = useCallback(async (info: DateSelectArg) => {
@@ -115,14 +134,23 @@ export function CalendarView({ onSelectTask }: CalendarViewProps) {
   return (
     <div className="rounded-lg border border-neutral-200 bg-white p-4 shadow-sm">
       <FullCalendar
+        key={isDayMode ? format(activeDate, 'yyyy-MM-dd') : 'full'}
         plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-        initialView={view}
-        initialDate={currentDate}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay',
-        }}
+        initialView={activeView}
+        initialDate={activeDate}
+        headerToolbar={
+          isDayMode
+            ? {
+                left: 'prev,next today',
+                center: 'title',
+                right: '',
+              }
+            : {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,timeGridDay',
+              }
+        }
         buttonText={{
           today: 'Today',
           month: 'Month',

@@ -68,6 +68,7 @@ src/
 |---|---|
 | `/` | Redirects to `/calendar` |
 | `/calendar` | `CalendarPage` |
+| `/daily` | `DailyPage` |
 | `/tasks` | `TasksPage` |
 | `/projects` | `ProjectsPage` |
 | `/projects/:projectId` | `ProjectPage` |
