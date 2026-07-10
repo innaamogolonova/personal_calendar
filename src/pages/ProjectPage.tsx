@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { getProjectById, updateProject } from '../db/projects'
-import { FormattedTextEditor } from '../components/pages/FormattedTextEditor'
+import { BlockTextEditor } from '../components/pages/BlockTextEditor'
 
 export function ProjectPage() {
   const { projectId } = useParams<{ projectId: string }>()
@@ -50,7 +50,7 @@ export function ProjectPage() {
         <h1 className="text-2xl font-semibold text-neutral-900">{project.name}</h1>
       </div>
 
-      <FormattedTextEditor
+      <BlockTextEditor
         content={content}
         onChange={handleChange}
         placeholder="Start writing... # heading, **bold**, *italic*, - list, > quote, - [ ] checklist"

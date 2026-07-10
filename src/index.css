@@ -124,3 +124,13 @@ body {
   opacity: 0.75;
   font-size: 0.6875rem;
 }
+
+[contenteditable] strong,
+[contenteditable] b {
+  font-weight: 700;
+}
+
+[contenteditable] em,
+[contenteditable] i {
+  font-style: italic;
+}

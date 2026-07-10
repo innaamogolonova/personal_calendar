@@ -4,7 +4,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { deletePage, getChildPages, getPageById, updatePage } from '../db/pages'
 import { getProjectById } from '../db/projects'
 import { useSidebarStore } from '../stores/sidebarStore'
-import { FormattedTextEditor } from '../components/pages/FormattedTextEditor'
+import { BlockTextEditor } from '../components/pages/BlockTextEditor'
 
 async function expandAncestorPages(
   pageId: string,
@@ -106,7 +106,7 @@ export function ProjectSubpagePage() {
         </button>
       </div>
 
-      <FormattedTextEditor
+      <BlockTextEditor
         content={content}
         onChange={(nextContent) => {
           setContent(nextContent)
