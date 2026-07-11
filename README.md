@@ -37,7 +37,7 @@ src/
 │   ├── tasks/           # Task list, edit panel, popovers
 │   └── shared/          # EntityEditPopover, ColorPicker
 ├── db/                  # Dexie schema + CRUD (tasks, projects, pages, labels)
-├── lib/                 # Pure helpers (markdown, dates, colors, events)
+├── lib/                 # Pure helpers (markdown, dates, colors, events, task query)
 └── stores/              # Zustand UI state (calendar view, sidebar expand)
 ```
 
@@ -54,8 +54,8 @@ Data lives in IndexedDB (Dexie). See [AGENTS.md](./AGENTS.md) for data model, ed
 - [x] Calendar sync to task list functionality 
 - [x] Project label for tasks 
 - [x] Project nested structure 
-- [ ] Filtering for the task list 
-- [ ] Have a daily display of some sort
+- [x] Filtering for the task list 
+- [x] Have a daily display of some sort
 
 ### Next improvements after MVP: 
 - [ ] Styling

@@ -11,7 +11,8 @@ Tasks are a **single source of truth**: scheduling on the calendar updates the s
 ## Core features
 
 - **Calendar** (`/calendar`) — day, week, and month views. Week view is an hourly time grid (Google Calendar style). Drag-and-drop to schedule and reschedule tasks. Week starts on Monday.
-- **Tasks** (`/tasks`) — global task list with inline editing (title, priority, labels, project, schedule).
+- **Daily** (`/daily`) — day picker with that day's tasks (same list UI + filters) and a day calendar view.
+- **Tasks** (`/tasks`) — global task list with search, filters (status, priority, project, label), sorting, and inline editing.
 - **Projects** (`/projects`) — list of all projects with rename/color edit and delete.
   - **Project page** (`/projects/:projectId`) — project landing with a block markdown editor for overview notes.
   - **Subpages** (`/projects/:projectId/pages/:pageId`) — nested pages with title + block editor; sidebar tree supports add/delete at any depth.
